@@ -1,0 +1,1 @@
+# Generate struct fields
