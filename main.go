@@ -17,6 +17,8 @@ var (
 		"comma-separated list of struct names for which to generate fields; must be set")
 	cNames = flag.String("custom_name", "",
 		"comma-separated list of names, default is the struct names for which to generate fields")
+	output = flag.String("output", "",
+		"output file name; default file creates for each struct, with name: <struct_name>_fields.go")
 )
 
 // usage is a replacement usage function for the flags package.
@@ -32,6 +34,7 @@ func usage() {
 type parsedFlags struct {
 	tagName       string
 	neededStructs map[string]*options
+	output        string
 }
 
 type options struct {
@@ -66,6 +69,7 @@ func parseFlags() *parsedFlags {
 	return &parsedFlags{
 		tagName:       *tName,
 		neededStructs: neededStructs,
+		output:        *output,
 	}
 }
 
@@ -81,7 +85,7 @@ func main() {
 		log.Fatalf("parsing files failed: %v", err)
 	}
 
-	if err := gen.generate(); err != nil {
+	if err := gen.generate(flags.output); err != nil {
 		log.Fatalf("generating files failed: %v", err)
 	}
 }
