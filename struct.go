@@ -51,7 +51,7 @@ func tagValue(tag *ast.BasicLit, tagName string) (string, error) {
 	}
 
 	tagValues := strings.Split(value, ",")
-	if len(tagValues) == 0 || tagValues[0] == "-" {
+	if len(tagValues) == 0 || tagValues[0] == "" || tagValues[0] == "-" {
 		return "", fmt.Errorf("empty or '-' %s tag value", tagName)
 	}
 	return tagValues[0], nil
