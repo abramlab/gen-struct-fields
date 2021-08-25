@@ -19,6 +19,8 @@ var (
 		"comma-separated list of names, default is the struct names for which to generate fields")
 	output = flag.String("output", "",
 		"output file name; default file creates for each struct, with name: <struct_name>_fields.go")
+	genji = flag.Bool("genji", false,
+		"determining the generation of helpers to work with genji, casting and etc")
 )
 
 // usage is a replacement usage function for the flags package.
@@ -35,6 +37,7 @@ type parsedFlags struct {
 	tagName       string
 	neededStructs map[string]*options
 	output        string
+	genji         bool
 }
 
 type options struct {
@@ -72,6 +75,7 @@ func parseFlags() *parsedFlags {
 		tagName:       *tName,
 		neededStructs: neededStructs,
 		output:        *output,
+		genji:         *genji,
 	}
 }
 
@@ -80,7 +84,13 @@ func main() {
 
 	gen := &generator{
 		tagName: flags.tagName,
-		genTpls: basicTemplates,
+		genTpls: []*Template{
+			basicTemplates,
+		},
+	}
+
+	if flags.genji {
+		gen.genTpls = append(gen.genTpls, genjiTemplates)
 	}
 
 	if err := gen.parse(flags.neededStructs); err != nil {

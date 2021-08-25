@@ -18,7 +18,7 @@ import (
 type generator struct {
 	buf     bytes.Buffer
 	tagName string
-	genTpls []*template.Template
+	genTpls []*Template
 
 	pkgName string
 	structs []*Struct
@@ -128,8 +128,17 @@ func (gen *generator) printHeader() {
 
 func (gen *generator) printTemplates(s *Struct) error {
 	for _, tpl := range gen.genTpls {
-		if err := printTemplate(&gen.buf, tpl, s); err != nil {
-			return err
+		if tpl.onceGen != nil {
+			tpl.onceGen.once.Do(func() {
+				if err := printTemplate(&gen.buf, tpl.onceGen.tpl, s); err != nil {
+					log.Fatalf("generating template failed: %v", err)
+				}
+			})
+		}
+		for _, t := range tpl.tpls {
+			if err := printTemplate(&gen.buf, t, s); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -168,7 +177,7 @@ func writeFile(data []byte, output string) error {
 	return nil
 }
 
-func printTemplate(buf *bytes.Buffer, tpl *template.Template, s *Struct) error {
+func printTemplate(buf *bytes.Buffer, tpl *template.Template, s interface{}) error {
 	if err := tpl.Execute(buf, s); err != nil {
 		return fmt.Errorf("execute tpl err: %w", err)
 	}
