@@ -45,17 +45,19 @@ func parseFlags() *parsedFlags {
 	flag.Usage = usage
 	flag.Parse()
 
+	if *sNames == "" {
+		flag.Usage()
+		os.Exit(2)
+	}
 	structNames := strings.Split(*sNames, ",")
-	customNames := strings.Split(*cNames, ",")
-	if len(structNames) == 0 {
-		flag.Usage()
-		os.Exit(2)
+	customNames := make([]string, len(structNames))
+	if *cNames != "" {
+		cns := strings.Split(*cNames, ",")
+		for i, name := range cns {
+			customNames[i] = name
+		}
 	}
-	if len(customNames) != 0 && (len(customNames) != len(structNames)) {
-		log.Printf("struct and custom names must be the same length")
-		flag.Usage()
-		os.Exit(2)
-	}
+
 	neededStructs := make(map[string]*options)
 	for i := 0; i < len(structNames); i++ {
 		customName := structNames[i]
