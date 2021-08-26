@@ -21,6 +21,7 @@ var (
 			structNameTpl,
 			structFieldsTpl,
 			structFieldsArrayTpl,
+			structFieldsMapTpl,
 		},
 	}
 	genjiTemplates = &Template{
@@ -54,6 +55,13 @@ var (
 		`var {{.Name}}FieldsArray = []string{
 		{{range $field := .Fields -}}
 		{{$.Name}}Fields.{{$field.Name}},
+		{{end}}
+	}
+`))
+	structFieldsMapTpl = template.Must(template.New("structFieldsMapTpl").Parse(
+		`var {{.Name}}FieldsMap = map[string]struct{}{
+		{{range $field := .Fields -}}
+		"{{ .Value }}": {},
 		{{end}}
 	}
 `))
