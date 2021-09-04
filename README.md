@@ -7,7 +7,7 @@ The generated code can be used, for example, to simplify work with the database 
 Gen-struct-fields can be installed as any other go command:
 
 ```
-go get github.com/abramlab/gen-struct-fields
+go get github.com/abramlab/gen-struct-fields@v0.1.2
 ```
 After that, the `gen-struct-fields` executable will be in "$GOPATH/bin" folder, and you can use it with `go generate`
 
@@ -35,6 +35,13 @@ For multiple generation, separate tag struct value with coma, for example:
 gen-struct-fields -struct=User,Car,Plane -tag=custom_tag -custom_name=user,,plane
 ```
 will generate fields for ```User,Car,Plane``` structs with custom names for ```User``` and ```Plane```.
+
+
+If you want to specify custom tag name(by default it is `field`), use "-tag":
+
+```
+gen-struct-fields -struct=User -custom_name=user -tag=custom_tag
+```
 
 ## Simple example
 
